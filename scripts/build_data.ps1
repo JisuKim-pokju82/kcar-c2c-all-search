@@ -41,6 +41,11 @@ if (Test-Path $OutJsPath) {
     }
 }
 
+if ($env:GITHUB_ACTIONS -eq "true" -and $prevMeta -and $prevMeta.crawledDate -eq $TodayDate -and [int]$prevMeta.livePlatformsCount -ge 4) {
+    Write-Host "[$UpdatedAtStr] Today's complete 4/4 Korean-IP dataset ($TodayDate) is already present. Skipping partial Cloud overwrite." -ForegroundColor Cyan
+    exit 0
+}
+
 $latestTrend = $null
 try {
     $tsCache = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -364,6 +369,16 @@ foreach ($hub in $daangnHubs) {
 
 if ($daangnItems.Count -gt 0) {
     $livePlatforms.Add("daangn")
+    if ($daangnItems.Count -lt 600 -and $prevVehicles.Count -gt 0) {
+        $prevDaangnExtra = @($prevVehicles | Where-Object { $_.platform -eq "daangn" })
+        foreach ($pv in $prevDaangnExtra) {
+            if ($daangnItems.Count -ge 900) { break }
+            if (-not $seenIds.ContainsKey($pv.id)) {
+                $seenIds[$pv.id] = $true
+                $daangnItems.Add($pv)
+            }
+        }
+    }
     Write-Host "   Daangn live count: $($daangnItems.Count) (Market Total: $daangnLiveTotal)" -ForegroundColor Green
 } else {
     $prevDaangn = @($prevVehicles | Where-Object { $_.platform -eq "daangn" })
