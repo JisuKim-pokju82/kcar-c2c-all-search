@@ -95,7 +95,7 @@
             </div>
           </div>
 
-          <!-- 5-Column Quick Menu (.list-ad with official K Car 3D PNGs) -->
+          <!-- 4-Column Quick Menu (.list-ad with official K Car 3D PNGs) -->
           <div class="list-ad-wrap">
             <ul class="list-ad">
               <li>
@@ -103,12 +103,6 @@
                   <span class="quick-new-tag">NEW</span>
                   <i class="ico"><img src="./assets/kcar/ico-ad-all.jpg" alt="" /></i>
                   <span class="txt">세상의 모든<br />직거래</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="link" id="qMenuKcarOnly">
-                  <i class="ico"><img src="./assets/kcar/ico-ad-01.png" alt="" /></i>
-                  <span class="txt">안심직거래<br />차량보기</span>
                 </button>
               </li>
               <li>
@@ -155,6 +149,9 @@
               <button type="button" class="kcar-stroke-pill" data-home-jump="all">
                 전체 <span id="pillCntAll">40,715</span>
               </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="kcar">
+                <span class="plat-mini-dot" style="background:#b70f28;"></span>케이카 <span id="pillCntKcar">342</span>
+              </button>
               <button type="button" class="kcar-stroke-pill" data-home-jump="daangn">
                 <span class="plat-mini-dot" style="background:#ff6f0f;"></span>당근마켓 <span id="pillCntDaangn">37,829</span>
               </button>
@@ -163,9 +160,6 @@
               </button>
               <button type="button" class="kcar-stroke-pill" data-home-jump="kb">
                 <span class="plat-mini-dot" style="background:#ffbc00;"></span>KB차차차 <span id="pillCntKb">32</span>
-              </button>
-              <button type="button" class="kcar-stroke-pill" data-home-jump="kcar">
-                <span class="plat-mini-dot" style="background:#b70f28;"></span>K Car <span id="pillCntKcar">342</span>
               </button>
             </div>
           </div>
@@ -203,10 +197,11 @@
             </div>
 
             <div class="meta-plat-chips" id="homeExtTabs" style="margin-bottom: 16px;">
-              <button type="button" class="kcar-stroke-pill is-active" data-ext-tab="external">외부 플랫폼 전체</button>
+              <button type="button" class="kcar-stroke-pill is-active" data-ext-tab="all">전체</button>
+              <button type="button" class="kcar-stroke-pill" data-ext-tab="kcar">케이카</button>
               <button type="button" class="kcar-stroke-pill" data-ext-tab="daangn">당근마켓</button>
-              <button type="button" class="kcar-stroke-pill" data-ext-tab="encar">엔카 개인직거래</button>
-              <button type="button" class="kcar-stroke-pill" data-ext-tab="kb">KB차차차 직거래</button>
+              <button type="button" class="kcar-stroke-pill" data-ext-tab="encar">엔카직거래</button>
+              <button type="button" class="kcar-stroke-pill" data-ext-tab="kb">KB차차차</button>
             </div>
 
             <div class="vert-grid-2col" id="homeExternalGrid"></div>
@@ -240,20 +235,20 @@
             <button type="button" class="theme-tab-pill is-active" data-plat-cat="all">
               전체 <span class="num" id="catCntAll">40,715</span>
             </button>
-            <button type="button" class="theme-tab-pill" data-plat-cat="external">
-              외부플랫폼 통합 <span class="num" id="catCntExt">40,373</span>
-            </button>
             <button type="button" class="theme-tab-pill" data-plat-cat="kcar">
-              K Car 안심직거래 <span class="num" id="catCntKcar">342</span>
+              케이카 <span class="num" id="catCntKcar">342</span>
             </button>
             <button type="button" class="theme-tab-pill" data-plat-cat="daangn">
               당근마켓 <span class="num" id="catCntDaangn">37,829</span>
             </button>
             <button type="button" class="theme-tab-pill" data-plat-cat="encar">
-              엔카 직거래 <span class="num" id="catCntEncar">2,512</span>
+              엔카직거래 <span class="num" id="catCntEncar">2,512</span>
             </button>
             <button type="button" class="theme-tab-pill" data-plat-cat="kb">
               KB차차차 <span class="num" id="catCntKb">32</span>
+            </button>
+            <button type="button" class="theme-tab-pill" data-plat-cat="external">
+              외부플랫폼 통합 <span class="num" id="catCntExt">40,373</span>
             </button>
           </div>
 

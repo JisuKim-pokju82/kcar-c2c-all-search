@@ -64,7 +64,7 @@
   const state = {
     view: 'home', // 'home' | 'list' | 'detail'
     prevView: 'home',
-    homeExtTab: 'external',
+    homeExtTab: 'all',
     platCat: 'all', // 'all' | 'external' | 'kcar' | 'daangn' | 'encar' | 'kb'
     keyword: '',
     certOnly: false,
@@ -363,11 +363,13 @@
   }
 
   function renderHomeExtGrid() {
-    let ext = VEHICLES.filter((v) => v.isExternal);
-    if (state.homeExtTab !== 'external') {
-      ext = ext.filter((v) => v.platform === state.homeExtTab);
+    let pool = VEHICLES;
+    if (state.homeExtTab === 'external') {
+      pool = VEHICLES.filter((v) => v.isExternal);
+    } else if (state.homeExtTab !== 'all') {
+      pool = VEHICLES.filter((v) => v.platform === state.homeExtTab);
     }
-    document.getElementById('homeExternalGrid').innerHTML = ext.slice(0, 6).map(renderVertCard).join('');
+    document.getElementById('homeExternalGrid').innerHTML = pool.slice(0, 6).map(renderVertCard).join('');
   }
 
   // Filtering Logic for View 2 (CarList)
@@ -949,13 +951,16 @@
         html: `
           <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
             <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuAllC2C').click();">
-              <span>세상의 모든 직거래 매물검색 (당근·엔카·KB·K Car)</span>
-            </button>
-            <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuKcarOnly').click();">
-              <span>K Car 안심직거래 차량보기 (실소유자 인증)</span>
+              <span>세상의 모든 직거래 매물검색 (케이카·당근·엔카·KB)</span>
             </button>
             <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuSelfReg').click();">
               <span>내차 셀프 등록 (K Car 인증차량 전용)</span>
+            </button>
+            <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuDiag').click();">
+              <span>출장진단 서비스 안내</span>
+            </button>
+            <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuSafe').click();">
+              <span>안전거래 지원 서비스 안내</span>
             </button>
           </div>
         `,
@@ -989,7 +994,6 @@
 
     // Quick Menu Icons
     document.getElementById('qMenuAllC2C').addEventListener('click', () => goToList({ platCat: 'all' }));
-    document.getElementById('qMenuKcarOnly').addEventListener('click', () => goToList({ platCat: 'kcar' }));
     document.getElementById('qMenuSelfReg').addEventListener('click', openSelfRegPolicyModal);
     document.getElementById('qMenuDiag').addEventListener('click', () => showServiceModal('diag'));
     document.getElementById('qMenuSafe').addEventListener('click', () => showServiceModal('safe'));

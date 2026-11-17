@@ -548,12 +548,12 @@ html, body {
 
 .list-ad {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-start;
 }
 
 .list-ad li {
-  width: 62px;
+  width: 72px;
 }
 
 .list-ad .link {
