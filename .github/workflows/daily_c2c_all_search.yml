@@ -2,8 +2,10 @@ name: Daily K Car All-C2C Mobile App Auto-Update (08:00 KST)
 
 on:
   schedule:
-    # 한국시간(KST) 매일 오전 08:00 정각 자동 실행 (UTC 23:00)
-    - cron: '0 23 * * *'
+    # 정각(:00) 글로벌 큐 지연을 피하기 위해 한국시간 07:42 (UTC 22:42) 선발 실행 -> 08:00 전 완료 보장
+    - cron: '42 22 * * *'
+    # 보조 안전망: 한국시간 08:08 (UTC 23:08) 재확인 실행
+    - cron: '8 23 * * *'
   workflow_dispatch:
 
 permissions:
