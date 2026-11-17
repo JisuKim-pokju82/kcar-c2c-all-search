@@ -46,6 +46,17 @@
         </div>
       </header>
 
+      <!-- Header C: Under-500M Special Exhibition Header (.header-wrap) -->
+      <header class="header-wrap" id="headerExhibition" style="display: none;">
+        <div class="header-left-group">
+          <button type="button" class="btn-back" id="btnBackExhibit" aria-label="뒤로가기"></button>
+          <h1 class="header-detail-cno">500만원 미만 직거래 기획전</h1>
+        </div>
+        <div class="header-right-group">
+          <button type="button" class="hdr-ico-btn btn-share-svg" id="btnShareExhibit" aria-label="기획전 공유하기"></button>
+        </div>
+      </header>
+
       <!-- Scrollable App Body -->
       <div class="app-body" id="appScrollBody">
 
@@ -53,7 +64,45 @@
              VIEW 1: MAIN PAGE (marketm.kcar.com/main 1:1 + 세상의 모든 직거래)
              ================================================================ -->
         <section class="page-view is-active" id="viewHome">
-          <!-- 1:1 Peeking Hero Rolling Banner -->
+          <!-- 1. Native K Car Style Integrated C2C Search Hub (Moved ABOVE Hero Banner) -->
+          <div class="meta-search-section">
+            <div class="meta-search-top">
+              <div class="meta-search-tit">
+                <span>세상의 모든 직거래 매물검색</span>
+                <span class="label-round-brand">통합</span>
+              </div>
+              <span class="meta-search-cnt" id="homeMetaTotalTxt">40,715대</span>
+            </div>
+
+            <form class="kcar-input-bar" id="homeSearchForm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#82848b" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20l-3.5-3.5"></path>
+              </svg>
+              <input type="text" id="homeSearchInput" placeholder="차량명, 지역으로 통합 검색 (예: 쏘렌토, GV80)" autocomplete="off" />
+              <button type="submit" class="kcar-search-btn">검색</button>
+            </form>
+
+            <div class="meta-plat-chips">
+              <button type="button" class="kcar-stroke-pill" data-home-jump="all">
+                전체 <span id="pillCntAll">40,715</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="kcar">
+                <span class="plat-mini-dot" style="background:#b70f28;"></span>케이카 <span id="pillCntKcar">342</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="daangn">
+                <span class="plat-mini-dot" style="background:#ff6f0f;"></span>당근마켓 <span id="pillCntDaangn">37,829</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="encar">
+                <span class="plat-mini-dot" style="background:#e60012;"></span>엔카직거래 <span id="pillCntEncar">2,512</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="kb">
+                <span class="plat-mini-dot" style="background:#ffbc00;"></span>KB차차차 <span id="pillCntKb">32</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. 1:1 Peeking Hero Rolling Banner -->
           <div class="hero-swiper-section">
             <div class="hero-swiper-track" id="heroSwiperTrack">
               <!-- Slide 1: 세상의 모든 직거래 통합검색 (Matches K Car Studio Podium + Slot Counter Style) -->
@@ -95,7 +144,7 @@
             </div>
           </div>
 
-          <!-- 4-Column Quick Menu (.list-ad with official K Car 3D PNGs) -->
+          <!-- 3. 4-Column Quick Menu (.list-ad with official K Car 3D PNGs) -->
           <div class="list-ad-wrap">
             <ul class="list-ad">
               <li>
@@ -126,42 +175,19 @@
             </ul>
           </div>
 
-          <!-- Native K Car Style Integrated C2C Search Hub -->
-          <div class="meta-search-section">
-            <div class="meta-search-top">
-              <div class="meta-search-tit">
-                <span>세상의 모든 직거래 매물검색</span>
-                <span class="label-round-brand">통합</span>
+          <!-- 4. Under 5,000,000 KRW Special Exhibition Banner (Right below 4 Quick Icons) -->
+          <div class="under500-promo-wrap">
+            <button type="button" class="under500-promo-card" id="btnUnder500Promo" aria-label="500만원 미만 실속 직거래 기획전 보러가기">
+              <img src="./assets/kcar/promo-under500-banner.jpg" alt="" loading="lazy" />
+              <div class="under500-promo-copy">
+                <span class="promo-u500-tag">가성비 기획전</span>
+                <strong class="promo-u500-tit">500만원 미만<br />실속 직거래 기획전</strong>
+                <span class="promo-u500-sub">
+                  첫차 · 출퇴근 가성비 매물 모아보기
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </span>
               </div>
-              <span class="meta-search-cnt" id="homeMetaTotalTxt">40,715대</span>
-            </div>
-
-            <form class="kcar-input-bar" id="homeSearchForm">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#82848b" stroke-width="2" stroke-linecap="round">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20l-3.5-3.5"></path>
-              </svg>
-              <input type="text" id="homeSearchInput" placeholder="차량명, 지역으로 통합 검색 (예: 쏘렌토, GV80)" autocomplete="off" />
-              <button type="submit" class="kcar-search-btn">검색</button>
-            </form>
-
-            <div class="meta-plat-chips">
-              <button type="button" class="kcar-stroke-pill" data-home-jump="all">
-                전체 <span id="pillCntAll">40,715</span>
-              </button>
-              <button type="button" class="kcar-stroke-pill" data-home-jump="kcar">
-                <span class="plat-mini-dot" style="background:#b70f28;"></span>케이카 <span id="pillCntKcar">342</span>
-              </button>
-              <button type="button" class="kcar-stroke-pill" data-home-jump="daangn">
-                <span class="plat-mini-dot" style="background:#ff6f0f;"></span>당근마켓 <span id="pillCntDaangn">37,829</span>
-              </button>
-              <button type="button" class="kcar-stroke-pill" data-home-jump="encar">
-                <span class="plat-mini-dot" style="background:#e60012;"></span>엔카직거래 <span id="pillCntEncar">2,512</span>
-              </button>
-              <button type="button" class="kcar-stroke-pill" data-home-jump="kb">
-                <span class="plat-mini-dot" style="background:#ffbc00;"></span>KB차차차 <span id="pillCntKb">32</span>
-              </button>
-            </div>
+            </button>
           </div>
 
           <!-- Section 1: 이런 차량은 어떠세요? (Exact marketm.kcar.com 2-col .car-item.vert) -->
@@ -350,6 +376,95 @@
              ================================================================ -->
         <section class="page-view" id="viewDetail">
           <div id="detailRenderTarget"></div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 4: UNDER-500M SPECIAL EXHIBITION (500만원 미만 가성비 기획전)
+             ================================================================ -->
+        <section class="page-view" id="viewExhibition">
+          <!-- Top Value-Car Editorial Hero Key Visual -->
+          <div class="exhibit-hero">
+            <img src="./assets/kcar/exhibit-under500-hero.jpg" alt="500만원 미만 가성비 직거래 기획전" fetchpriority="high" />
+            <div class="exhibit-hero-overlay">
+              <span class="exhibit-hero-badge">K Car 직거래 특별 기획전</span>
+              <h2 class="exhibit-hero-tit">부담 없는 첫차 · 출퇴근차,<br />500만원 미만 가성비 기획전</h2>
+              <p class="exhibit-hero-sub">취등록세 · 유지비 부담 적은 500만원 미만 실매물만 모았어요</p>
+              <div class="exhibit-hero-stat" id="exhibitTotalSummary">
+                전체 204대 · 케이카 25대 · 외부 플랫폼 179대
+              </div>
+            </div>
+          </div>
+
+          <!-- Sticky Price Sub-Band & Sort Bar -->
+          <div class="exhibit-controls-bar">
+            <div class="meta-plat-chips" id="exhibitBandTabs">
+              <button type="button" class="kcar-stroke-pill is-active" data-u500-band="all">전체 (~500만원)</button>
+              <button type="button" class="kcar-stroke-pill" data-u500-band="under300">300만원 미만</button>
+              <button type="button" class="kcar-stroke-pill" data-u500-band="300to500">300~500만원</button>
+            </div>
+            <select class="sort-select-clean" id="selExhibitSort" aria-label="기획전 정렬">
+              <option value="recommended">추천순</option>
+              <option value="price_asc">낮은가격순</option>
+              <option value="mileage_asc">짧은주행순</option>
+              <option value="year_desc">최신연식순</option>
+            </select>
+          </div>
+
+          <!-- Priority 1 (TOP): K Car 안심직거래 500만원 미만 차량 -->
+          <div class="kcar-section" id="exhibitKcarSec">
+            <div class="title-area" style="margin-bottom: 12px;">
+              <h2 class="sub-h3">
+                케이카 안심직거래 차량 <span class="exhibit-sec-cnt" id="exhibitKcarCount">25대</span>
+              </h2>
+              <span class="ad-help-pill">실소유자 인증</span>
+            </div>
+
+            <div class="cert-ribbon-box">
+              <img src="./assets/kcar/ico-check-cert.svg" alt="" />
+              <span>500만원 미만이어도 실소유자 인증이 완료된 케이카 차량이에요.</span>
+            </div>
+
+            <div class="vert-grid-2col" id="exhibitKcarGrid"></div>
+
+            <button type="button" class="btn-more-cars" id="btnExpandExhibitKcar" style="display: none;">
+              케이카 차량 전체보기
+            </button>
+          </div>
+
+          <div class="gray-divider"></div>
+
+          <!-- Priority 2 (BOTTOM): 외부 플랫폼 500만원 미만 수집 차량 -->
+          <div class="kcar-section" id="exhibitExtSec">
+            <div class="title-area" style="margin-bottom: 6px;">
+              <h2 class="sub-h3">
+                외부 플랫폼 직거래 수집 차량 <span class="exhibit-sec-cnt" id="exhibitExtCount">179대</span>
+              </h2>
+            </div>
+            <p class="exhibit-ext-desc">
+              당근마켓 · 엔카 · KB차차차에서 수집된 500만원 미만 개인 직거래 매물이에요.
+            </p>
+
+            <div class="meta-plat-chips" id="exhibitExtTabs" style="margin-bottom: 16px;">
+              <button type="button" class="kcar-stroke-pill is-active" data-u500-plat="all">
+                외부 전체 <span id="u500CntExtAll">179</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-u500-plat="daangn">
+                <span class="plat-mini-dot" style="background:#ff6f0f;"></span>당근마켓 <span id="u500CntDaangn">162</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-u500-plat="encar">
+                <span class="plat-mini-dot" style="background:#e60012;"></span>엔카직거래 <span id="u500CntEncar">13</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-u500-plat="kb">
+                <span class="plat-mini-dot" style="background:#ffbc00;"></span>KB차차차 <span id="u500CntKb">4</span>
+              </button>
+            </div>
+
+            <div class="vert-grid-2col" id="exhibitExtGrid"></div>
+
+            <button type="button" class="btn-more-cars" id="btnMoreExhibitExt" style="display: none;">
+              외부 플랫폼 차량 더 보기
+            </button>
+          </div>
         </section>
 
       </div>

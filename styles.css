@@ -612,13 +612,102 @@ html, body {
   word-break: keep-all;
 }
 
-/* Integrated Meta-Search Entry Section (100% Native K Car Component Language) */
+/* Integrated Meta-Search Entry Section (100% Native K Car Component Language, Top of Main) */
 .meta-search-section {
-  margin: 14px 20px 4px;
-  padding: 16px;
+  margin: 4px 20px 14px;
+  padding: 15px 16px;
   border-radius: 8px;
   background-color: var(--gray11);
   border: 1px solid var(--gray8);
+}
+
+/* Under-500M Promo Banner Card below 4 Quick Icons */
+.under500-promo-wrap {
+  padding: 12px 20px 0;
+}
+
+.under500-promo-card {
+  width: 100%;
+  aspect-ratio: 350 / 108;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  display: block;
+  text-align: left;
+  background-color: #121826;
+  box-shadow: 0 4px 14px rgba(18, 24, 38, 0.08);
+}
+
+.under500-promo-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  display: block;
+}
+
+.under500-promo-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(18, 24, 38, 0.96) 0%,
+    rgba(18, 24, 38, 0.86) 50%,
+    rgba(18, 24, 38, 0.18) 78%,
+    rgba(18, 24, 38, 0) 100%
+  );
+  z-index: 1;
+}
+
+.under500-promo-copy {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: 66%;
+}
+
+.promo-u500-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 2px;
+  background-color: var(--brandColor);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: -0.3px;
+}
+
+.promo-u500-tit {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 21px;
+  letter-spacing: -0.5px;
+  word-break: keep-all;
+}
+
+.promo-u500-sub {
+  margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: -0.5px;
 }
 
 .meta-search-top {
@@ -2086,4 +2175,130 @@ dialog.kcar-modal::backdrop {
 .kcar-snackbar.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ==========================================================================
+   7. SCREEN 4: UNDER-500M SPECIAL EXHIBITION (500만원 미만 가성비 기획전)
+   ========================================================================== */
+.exhibit-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: #11151e;
+}
+
+.exhibit-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 32%;
+  display: block;
+}
+
+.exhibit-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 21, 30, 0.06) 0%,
+    rgba(17, 21, 30, 0.28) 42%,
+    rgba(17, 21, 30, 0.92) 82%,
+    rgba(17, 21, 30, 0.98) 100%
+  );
+  z-index: 1;
+}
+
+.exhibit-hero-overlay {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.exhibit-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 2px;
+  background-color: var(--brandColor);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: -0.4px;
+  margin-bottom: 8px;
+}
+
+.exhibit-hero-tit {
+  color: #fff;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.exhibit-hero-sub {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: -0.5px;
+}
+
+.exhibit-hero-stat {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 15px;
+  letter-spacing: -0.4px;
+}
+
+.exhibit-controls-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: #fff;
+  border-bottom: 1px solid var(--gray8);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.exhibit-sec-cnt {
+  color: var(--brandColor);
+  font-weight: 700;
+  margin-left: 3px;
+}
+
+.exhibit-ext-desc {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: -0.5px;
+  color: var(--gray4);
+  margin-bottom: 14px;
+}
+
+.kcar-section .cert-ribbon-box {
+  margin: 0 0 16px;
+}
+
+.kcar-section .btn-more-cars {
+  width: 100%;
+  margin: 18px 0 0;
 }

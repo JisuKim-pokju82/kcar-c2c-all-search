@@ -62,7 +62,7 @@
   `;
 
   const state = {
-    view: 'home', // 'home' | 'list' | 'detail'
+    view: 'home', // 'home' | 'list' | 'detail' | 'exhibit'
     prevView: 'home',
     homeExtTab: 'all',
     platCat: 'all', // 'all' | 'external' | 'kcar' | 'daangn' | 'encar' | 'kb'
@@ -77,6 +77,12 @@
     wishOnly: false,
     pageSize: 15,
     visibleCount: 15,
+    u500Band: 'all', // 'all' | 'under300' | '300to500'
+    u500Sort: 'recommended',
+    u500ExtPlat: 'all', // 'all' | 'daangn' | 'encar' | 'kb'
+    u500KcarExpanded: false,
+    u500ExtPageSize: 12,
+    u500ExtVisible: 12,
     selectedCar: null,
     wishedIds: new Set(),
     modalConfirmFn: null
@@ -839,6 +845,130 @@
       : `<span>채팅하기</span>`;
   }
 
+  // View 4: Under-500M Special Exhibition Renderer (K Car TOP -> External Platforms BELOW)
+  function sortExhibitionList(list, sortKey) {
+    const arr = [...list];
+    if (sortKey === 'price_asc') arr.sort((a, b) => a.priceManwon - b.priceManwon);
+    else if (sortKey === 'mileage_asc') arr.sort((a, b) => (a.mileageKm || 999999) - (b.mileageKm || 999999));
+    else if (sortKey === 'year_desc') arr.sort((a, b) => (b.year || 0) - (a.year || 0));
+    return arr;
+  }
+
+  function interleaveExternalRecommended(extCars) {
+    const d = extCars.filter((v) => v.platform === 'daangn');
+    const e = extCars.filter((v) => v.platform === 'encar');
+    const k = extCars.filter((v) => v.platform === 'kb');
+    const res = [];
+    let di = 0, ei = 0, ki = 0;
+    while (di < d.length || ei < e.length || ki < k.length) {
+      if (di < d.length) res.push(d[di++]);
+      if (di < d.length) res.push(d[di++]);
+      if (ei < e.length) res.push(e[ei++]);
+      if (ki < k.length) res.push(k[ki++]);
+    }
+    return res;
+  }
+
+  function renderExhibition() {
+    const allUnder500 = VEHICLES.filter((v) => v.priceManwon > 0 && v.priceManwon < 500);
+    const totalKcarAll = allUnder500.filter((v) => v.platform === 'kcar').length;
+    const totalExtAll = allUnder500.filter((v) => v.isExternal).length;
+
+    const summaryEl = document.getElementById('exhibitTotalSummary');
+    if (summaryEl) {
+      summaryEl.textContent = `전체 ${fmtNum(allUnder500.length)}대 · 케이카 ${fmtNum(totalKcarAll)}대 · 외부 플랫폼 ${fmtNum(totalExtAll)}대`;
+    }
+
+    const bandPool = allUnder500.filter((v) => {
+      if (state.u500Band === 'under300') return v.priceManwon < 300;
+      if (state.u500Band === '300to500') return v.priceManwon >= 300 && v.priceManwon < 500;
+      return true;
+    });
+
+    document.querySelectorAll('#exhibitBandTabs [data-u500-band]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.u500Band === state.u500Band);
+    });
+    const sortEl = document.getElementById('selExhibitSort');
+    if (sortEl) sortEl.value = state.u500Sort;
+
+    // 1. TOP SECTION: K Car Vehicles (< 500만원)
+    let kcarList = bandPool.filter((v) => v.platform === 'kcar');
+    if (state.u500Sort === 'recommended') {
+      kcarList = [...kcarList].sort((a, b) => Number(Boolean(b.diagYn)) - Number(Boolean(a.diagYn)));
+    } else {
+      kcarList = sortExhibitionList(kcarList, state.u500Sort);
+    }
+
+    document.getElementById('exhibitKcarCount').textContent = `${fmtNum(kcarList.length)}대`;
+    const kcarGrid = document.getElementById('exhibitKcarGrid');
+    const kcarExpandBtn = document.getElementById('btnExpandExhibitKcar');
+
+    if (kcarList.length === 0) {
+      kcarGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 28px 12px; text-align: center;">
+          <p style="font-size: 14px; font-weight: 500; color: #16171d;">해당 가격대의 케이카 차량이 없습니다.</p>
+        </div>
+      `;
+      kcarExpandBtn.style.display = 'none';
+    } else {
+      const kcarInitialCnt = 6;
+      const shownKcar = state.u500KcarExpanded ? kcarList : kcarList.slice(0, kcarInitialCnt);
+      kcarGrid.innerHTML = shownKcar.map(renderVertCard).join('');
+
+      if (kcarList.length > kcarInitialCnt) {
+        kcarExpandBtn.style.display = 'block';
+        kcarExpandBtn.textContent = state.u500KcarExpanded
+          ? `케이카 차량 접기 (${fmtNum(kcarList.length)}대)`
+          : `케이카 차량 전체보기 (${fmtNum(kcarInitialCnt)} / ${fmtNum(kcarList.length)}대)`;
+      } else {
+        kcarExpandBtn.style.display = 'none';
+      }
+    }
+
+    // 2. BOTTOM SECTION: External Platform Vehicles (< 500만원)
+    const extBase = bandPool.filter((v) => v.isExternal);
+    document.getElementById('exhibitExtCount').textContent = `${fmtNum(extBase.length)}대`;
+    document.getElementById('u500CntExtAll').textContent = fmtNum(extBase.length);
+    document.getElementById('u500CntDaangn').textContent = fmtNum(extBase.filter((v) => v.platform === 'daangn').length);
+    document.getElementById('u500CntEncar').textContent = fmtNum(extBase.filter((v) => v.platform === 'encar').length);
+    document.getElementById('u500CntKb').textContent = fmtNum(extBase.filter((v) => v.platform === 'kb').length);
+
+    document.querySelectorAll('#exhibitExtTabs [data-u500-plat]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.u500Plat === state.u500ExtPlat);
+    });
+
+    let extList =
+      state.u500ExtPlat === 'all' ? extBase : extBase.filter((v) => v.platform === state.u500ExtPlat);
+
+    if (state.u500Sort === 'recommended' && state.u500ExtPlat === 'all') {
+      extList = interleaveExternalRecommended(extList);
+    } else {
+      extList = sortExhibitionList(extList, state.u500Sort);
+    }
+
+    const extGrid = document.getElementById('exhibitExtGrid');
+    const extMoreBtn = document.getElementById('btnMoreExhibitExt');
+
+    if (extList.length === 0) {
+      extGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 32px 12px; text-align: center;">
+          <p style="font-size: 14px; font-weight: 500; color: #16171d;">조건에 맞는 외부 플랫폼 차량이 없습니다.</p>
+        </div>
+      `;
+      extMoreBtn.style.display = 'none';
+    } else {
+      const visibleExt = extList.slice(0, state.u500ExtVisible);
+      extGrid.innerHTML = visibleExt.map(renderVertCard).join('');
+
+      if (extList.length > state.u500ExtVisible) {
+        extMoreBtn.style.display = 'block';
+        extMoreBtn.textContent = `외부 플랫폼 차량 더 보기 (${fmtNum(state.u500ExtVisible)} / ${fmtNum(extList.length)}대)`;
+      } else {
+        extMoreBtn.style.display = 'none';
+      }
+    }
+  }
+
   // View Router
   function switchView(nextView, opts = {}) {
     if (nextView === 'detail' && state.view !== 'detail') {
@@ -847,8 +977,10 @@
     state.view = nextView;
 
     const isDetail = nextView === 'detail';
-    document.getElementById('headerMainList').style.display = isDetail ? 'none' : 'flex';
+    const isExhibit = nextView === 'exhibit';
+    document.getElementById('headerMainList').style.display = isDetail || isExhibit ? 'none' : 'flex';
     document.getElementById('headerDetail').style.display = isDetail ? 'flex' : 'none';
+    document.getElementById('headerExhibition').style.display = isExhibit ? 'flex' : 'none';
     document.getElementById('bottomNavBar').style.display = isDetail ? 'none' : 'block';
     document.getElementById('detailFixedBar').classList.toggle('is-active', isDetail);
 
@@ -865,12 +997,13 @@
     document.getElementById('viewHome').classList.toggle('is-active', nextView === 'home');
     document.getElementById('viewList').classList.toggle('is-active', nextView === 'list');
     document.getElementById('viewDetail').classList.toggle('is-active', nextView === 'detail');
+    document.getElementById('viewExhibition').classList.toggle('is-active', isExhibit);
 
     // Sync Bottom Tabbar
     document.querySelectorAll('#bottomNavBar .tabbar-link').forEach((btn) => {
       const k = btn.dataset.bnav;
       const on =
-        (nextView === 'home' && k === 'home') ||
+        ((nextView === 'home' || isExhibit) && k === 'home') ||
         (nextView === 'list' && state.wishOnly && k === 'wish') ||
         (nextView === 'list' && !state.wishOnly && k === 'search');
       btn.classList.toggle('is-active', on);
@@ -879,6 +1012,12 @@
     if (nextView === 'list') {
       if (!opts.preserveScroll) state.visibleCount = state.pageSize;
       renderCarList();
+    } else if (isExhibit) {
+      if (!opts.preserveScroll) {
+        state.u500ExtVisible = state.u500ExtPageSize;
+        state.u500KcarExpanded = false;
+      }
+      renderExhibition();
     } else if (nextView === 'detail' && state.selectedCar) {
       renderDetail(state.selectedCar);
     }
@@ -953,6 +1092,9 @@
             <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuAllC2C').click();">
               <span>세상의 모든 직거래 매물검색 (케이카·당근·엔카·KB)</span>
             </button>
+            <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('btnUnder500Promo').click();">
+              <span>500만원 미만 실속 직거래 기획전</span>
+            </button>
             <button type="button" class="exec-nav-btn" onclick="document.getElementById('kcarModal').close(); document.getElementById('qMenuSelfReg').click();">
               <span>내차 셀프 등록 (K Car 인증차량 전용)</span>
             </button>
@@ -992,12 +1134,54 @@
       }
     }
 
-    // Quick Menu Icons
+    // Quick Menu Icons & Under-500M Promo Banner
     document.getElementById('qMenuAllC2C').addEventListener('click', () => goToList({ platCat: 'all' }));
     document.getElementById('qMenuSelfReg').addEventListener('click', openSelfRegPolicyModal);
     document.getElementById('qMenuDiag').addEventListener('click', () => showServiceModal('diag'));
     document.getElementById('qMenuSafe').addEventListener('click', () => showServiceModal('safe'));
     document.getElementById('btnMidSafeBanner').addEventListener('click', () => showServiceModal('safe'));
+    document.getElementById('btnUnder500Promo').addEventListener('click', () => switchView('exhibit'));
+
+    // Special Exhibition Controls
+    document.getElementById('btnBackExhibit').addEventListener('click', () => switchView('home'));
+    document.getElementById('btnShareExhibit').addEventListener('click', () => {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href).catch(() => {});
+      }
+      showSnack('500만원 미만 직거래 기획전 링크가 복사되었습니다.');
+    });
+
+    document.querySelectorAll('#exhibitBandTabs [data-u500-band]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.u500Band = btn.dataset.u500Band;
+        state.u500ExtVisible = state.u500ExtPageSize;
+        state.u500KcarExpanded = false;
+        renderExhibition();
+      });
+    });
+
+    document.getElementById('selExhibitSort').addEventListener('change', (e) => {
+      state.u500Sort = e.target.value;
+      renderExhibition();
+    });
+
+    document.querySelectorAll('#exhibitExtTabs [data-u500-plat]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.u500ExtPlat = btn.dataset.u500Plat;
+        state.u500ExtVisible = state.u500ExtPageSize;
+        renderExhibition();
+      });
+    });
+
+    document.getElementById('btnExpandExhibitKcar').addEventListener('click', () => {
+      state.u500KcarExpanded = !state.u500KcarExpanded;
+      renderExhibition();
+    });
+
+    document.getElementById('btnMoreExhibitExt').addEventListener('click', () => {
+      state.u500ExtVisible += state.u500ExtPageSize;
+      renderExhibition();
+    });
 
     // Home Search & Platform Chips
     document.getElementById('homeSearchForm').addEventListener('submit', (e) => {
