@@ -230,12 +230,34 @@
   function initKPIs() {
     const p = META.platforms;
     const total = META.marketTotal || 40715;
-    document.getElementById('homeMetaTotalTxt').textContent = `총 ${fmtNum(total)}대`;
+    const totalEl = document.getElementById('homeMetaTotalTxt');
+    totalEl.textContent = `총 ${fmtNum(total)}대`;
+    if (META.updatedAt) {
+      totalEl.title = `자동 업데이트 기준: ${META.updatedAt}`;
+    }
     document.getElementById('pillCntAll').textContent = fmtNum(total);
     document.getElementById('pillCntDaangn').textContent = fmtNum(p.daangn.totalCount);
     document.getElementById('pillCntEncar').textContent = fmtNum(p.encar.totalCount);
     document.getElementById('pillCntKb').textContent = fmtNum(p.kb.totalCount);
     document.getElementById('pillCntKcar').textContent = fmtNum(p.kcar.totalCount);
+
+    // Dynamically update Hero Rolling Banner Slot Counter
+    const slotEl = document.getElementById('heroSlotCounter');
+    if (slotEl) {
+      const formatted = fmtNum(total);
+      const tokens = [];
+      for (let i = 0; i < formatted.length; i++) {
+        const ch = formatted[i];
+        if (ch === ',' && tokens.length > 0) {
+          tokens[tokens.length - 1] += ',';
+        } else {
+          tokens.push(ch);
+        }
+      }
+      slotEl.innerHTML =
+        tokens.map((t) => `<span class="slot-digit">${esc(t)}</span>`).join('') +
+        `<span class="slot-digit is-unit">대</span>`;
+    }
   }
 
   // Exact K Car .car-item.vert Renderer (Home 2-col & 3-col horizontal peeking cards)
