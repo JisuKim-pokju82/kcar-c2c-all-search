@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>안심직거래, 개인 간 중고차 거래 | K Car(케이카)</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <!-- ====================================================================
+         1:1 K CAR MOBILE WEB APP (Pure Mobile Screen Only)
+         ==================================================================== -->
+    <main class="kcar-mobile-app" id="kcarApp">
+      <!-- Header A: Main & Search List Header (.header-wrap) -->
+      <header class="header-wrap" id="headerMainList">
+        <div class="header-left-group">
+          <button type="button" class="btn-back" id="btnBackMain" aria-label="뒤로가기"></button>
+          <span class="kcar-logo" id="btnLogoHome" role="button" tabindex="0" aria-label="K Car"></span>
+          <h1 class="header-title" id="btnTitleHome">안심직거래</h1>
+        </div>
+        <div class="header-right-group">
+          <!-- Bell icon on Home / Search icon on List -->
+          <button type="button" class="hdr-ico-btn" id="btnHdrSearchOrAlarm" aria-label="검색">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16171d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7.2"></circle>
+              <path d="M20 20l-3.8-3.8"></path>
+            </svg>
+          </button>
+          <button type="button" class="hdr-ico-btn" id="btnHdrMenu" aria-label="전체메뉴">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16171d" stroke-width="1.7" stroke-linecap="round">
+              <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Header B: Vehicle Detail Header (.header-wrap) -->
+      <header class="header-wrap" id="headerDetail" style="display: none;">
+        <div class="header-left-group">
+          <button type="button" class="btn-back" id="btnBackDetail" aria-label="뒤로가기"></button>
+          <h1 class="header-detail-cno" id="dtlHeaderCno">198조2730</h1>
+        </div>
+        <div class="header-right-group">
+          <button type="button" class="hdr-ico-btn btn-share-svg" id="btnDtlShare" aria-label="공유하기"></button>
+          <button type="button" class="hdr-ico-btn btn-more-svg" id="btnDtlMore" aria-label="원본 링크"></button>
+        </div>
+      </header>
+
+      <!-- Scrollable App Body -->
+      <div class="app-body" id="appScrollBody">
+
+        <!-- ================================================================
+             VIEW 1: MAIN PAGE (marketm.kcar.com/main 1:1 + 세상의 모든 직거래)
+             ================================================================ -->
+        <section class="page-view is-active" id="viewHome">
+          <!-- 1:1 Peeking Hero Rolling Banner -->
+          <div class="hero-swiper-section">
+            <div class="hero-swiper-track" id="heroSwiperTrack">
+              <!-- Slide 1: 세상의 모든 직거래 통합검색 (Matches K Car Studio Podium + Slot Counter Style) -->
+              <div class="hero-banner-slide" data-hero-action="all-c2c">
+                <img src="./assets/kcar/hero-all-c2c-bg.jpg" alt="세상의 모든 직거래 통합검색" fetchpriority="high" />
+                <div class="hero-slot-counter" aria-hidden="true">
+                  <span class="slot-digit">4</span>
+                  <span class="slot-digit">0,</span>
+                  <span class="slot-digit">7</span>
+                  <span class="slot-digit">1</span>
+                  <span class="slot-digit">5</span>
+                  <span class="slot-digit is-unit">대</span>
+                </div>
+                <div class="hero-copy-overlay">
+                  <h2>세상의 모든 직거래 매물,<br />케이카에서 한 번에 찾으세요</h2>
+                  <p>당근마켓 · 엔카 · KB차차차 통합 검색하기</p>
+                </div>
+              </div>
+
+              <!-- Slide 2: Official K Car 내차 셀프등록 배너 -->
+              <div class="hero-banner-slide" data-hero-action="self-reg">
+                <img src="./assets/kcar/hero-reg.png" alt="내 차 견적이 아쉽다면? 직거래로 더 받아보세요" loading="lazy" />
+              </div>
+
+              <!-- Slide 3: Official K Car 출장진단 배너 -->
+              <div class="hero-banner-slide" data-hero-action="diag">
+                <img src="./assets/kcar/hero-diag.png" alt="출장진단 서비스" loading="lazy" />
+              </div>
+
+              <!-- Slide 4: Official K Car 안전거래 배너 -->
+              <div class="hero-banner-slide" data-hero-action="safe">
+                <img src="./assets/kcar/hero-safe.png" alt="안전거래 서비스" loading="lazy" />
+              </div>
+            </div>
+
+            <div class="hero-controls-overlay">
+              <span class="hero-pause-circle" aria-hidden="true">❚❚</span>
+              <span class="hero-fraction-pill" id="heroPageFraction">1 / 4</span>
+            </div>
+          </div>
+
+          <!-- 5-Column Quick Menu (.list-ad with official K Car 3D PNGs) -->
+          <div class="list-ad-wrap">
+            <ul class="list-ad">
+              <li>
+                <button type="button" class="link" id="qMenuAllC2C">
+                  <span class="quick-new-tag">NEW</span>
+                  <i class="ico"><img src="./assets/kcar/ico-ad-all.jpg" alt="" /></i>
+                  <span class="txt">세상의 모든<br />직거래</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="link" id="qMenuKcarOnly">
+                  <i class="ico"><img src="./assets/kcar/ico-ad-01.png" alt="" /></i>
+                  <span class="txt">안심직거래<br />차량보기</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="link" id="qMenuSelfReg">
+                  <i class="ico"><img src="./assets/kcar/ico-ad-02.png" alt="" /></i>
+                  <span class="txt">내차<br />셀프 등록</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="link" id="qMenuDiag">
+                  <i class="ico"><img src="./assets/kcar/ico-ad-04.png" alt="" /></i>
+                  <span class="txt">출장진단<br />서비스</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="link" id="qMenuSafe">
+                  <i class="ico"><img src="./assets/kcar/ico-ad-05.png" alt="" /></i>
+                  <span class="txt">안전거래<br />서비스</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Native K Car Style Integrated C2C Search Hub -->
+          <div class="meta-search-section">
+            <div class="meta-search-top">
+              <div class="meta-search-tit">
+                <span>세상의 모든 직거래 매물검색</span>
+                <span class="label-round-brand">통합</span>
+              </div>
+              <span class="meta-search-cnt" id="homeMetaTotalTxt">40,715대</span>
+            </div>
+
+            <form class="kcar-input-bar" id="homeSearchForm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#82848b" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20l-3.5-3.5"></path>
+              </svg>
+              <input type="text" id="homeSearchInput" placeholder="차량명, 지역으로 통합 검색 (예: 쏘렌토, GV80)" autocomplete="off" />
+              <button type="submit" class="kcar-search-btn">검색</button>
+            </form>
+
+            <div class="meta-plat-chips">
+              <button type="button" class="kcar-stroke-pill" data-home-jump="all">
+                전체 <span id="pillCntAll">40,715</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="daangn">
+                <span class="plat-mini-dot" style="background:#ff6f0f;"></span>당근마켓 <span id="pillCntDaangn">37,829</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="encar">
+                <span class="plat-mini-dot" style="background:#e60012;"></span>엔카직거래 <span id="pillCntEncar">2,512</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="kb">
+                <span class="plat-mini-dot" style="background:#ffbc00;"></span>KB차차차 <span id="pillCntKb">32</span>
+              </button>
+              <button type="button" class="kcar-stroke-pill" data-home-jump="kcar">
+                <span class="plat-mini-dot" style="background:#b70f28;"></span>K Car <span id="pillCntKcar">342</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 1: 이런 차량은 어떠세요? (Exact marketm.kcar.com 2-col .car-item.vert) -->
+          <div class="kcar-section">
+            <div class="title-area">
+              <h2 class="sub-h3">이런 차량은 어떠세요?</h2>
+              <span class="ad-help-pill">AD ?</span>
+            </div>
+            <div class="vert-grid-2col" id="homeKcarGrid"></div>
+          </div>
+
+          <!-- Official K Car Mid Safe-Transaction Banner -->
+          <div class="mid-official-banner" id="btnMidSafeBanner">
+            <img src="./assets/kcar/mid-safe-banner.png" alt="큰 돈 거래는 안전하게, 명의이전은 빠르게! 안전거래지원 서비스 보기" loading="lazy" />
+          </div>
+
+          <!-- Section 2: 지금 뜨고 있는 차량이에요. (Exact marketm.kcar.com Horizontal Peeking Row) -->
+          <div class="kcar-section" style="padding-bottom: 12px;">
+            <div class="title-area">
+              <h2 class="sub-h3">지금 뜨고 있는 차량이에요.</h2>
+              <button type="button" class="link-more-txt" id="btnHotKcarMore">더보기 &gt;</button>
+            </div>
+            <div class="vert-swiper-row" id="homeHotSwiperRow"></div>
+          </div>
+
+          <div class="gray-divider"></div>
+
+          <!-- Section 3: 세상의 모든 직거래 실시간 수집 매물 (Categorized External C2C Grid) -->
+          <div class="kcar-section">
+            <div class="title-area" style="margin-bottom: 10px;">
+              <h2 class="sub-h3">세상의 모든 직거래 실시간 매물</h2>
+              <button type="button" class="link-more-txt" id="btnExtMore">전체보기 &gt;</button>
+            </div>
+
+            <div class="meta-plat-chips" id="homeExtTabs" style="margin-bottom: 16px;">
+              <button type="button" class="kcar-stroke-pill is-active" data-ext-tab="external">외부 플랫폼 전체</button>
+              <button type="button" class="kcar-stroke-pill" data-ext-tab="daangn">당근마켓</button>
+              <button type="button" class="kcar-stroke-pill" data-ext-tab="encar">엔카 개인직거래</button>
+              <button type="button" class="kcar-stroke-pill" data-ext-tab="kb">KB차차차 직거래</button>
+            </div>
+
+            <div class="vert-grid-2col" id="homeExternalGrid"></div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 2: SEARCH / CARLIST PAGE (m.kcar.com/cc/search/CarList 1:1)
+             ================================================================ -->
+        <section class="page-view" id="viewList">
+          <!-- Exact Top 2-Tab Bar (직영차 | 직거래) -->
+          <div class="ccCarListBtnWrap">
+            <button type="button" class="tabBtn" id="btnTabDirectCar">직영차</button>
+            <button type="button" class="tabBtn isActive">직거래</button>
+          </div>
+
+          <!-- Keyword Search Input -->
+          <div class="carlist-search-box">
+            <div class="kcar-input-bar" style="margin-bottom: 0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#82848b" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20l-3.5-3.5"></path>
+              </svg>
+              <input type="text" id="listKeywordInput" placeholder="차량명, 모델, 지역 검색 (예: 그랜저, 쏘렌토, 서울)" autocomplete="off" />
+              <button type="button" id="btnClearKeyword" style="display:none; font-size:12px; color:#82848b; padding:0 6px;">지우기</button>
+            </div>
+          </div>
+
+          <!-- Platform Category Classification Tabs (.theme-category-bar) -->
+          <div class="theme-category-bar" id="listPlatTabBar">
+            <button type="button" class="theme-tab-pill is-active" data-plat-cat="all">
+              전체 <span class="num" id="catCntAll">40,715</span>
+            </button>
+            <button type="button" class="theme-tab-pill" data-plat-cat="external">
+              외부플랫폼 통합 <span class="num" id="catCntExt">40,373</span>
+            </button>
+            <button type="button" class="theme-tab-pill" data-plat-cat="kcar">
+              K Car 안심직거래 <span class="num" id="catCntKcar">342</span>
+            </button>
+            <button type="button" class="theme-tab-pill" data-plat-cat="daangn">
+              당근마켓 <span class="num" id="catCntDaangn">37,829</span>
+            </button>
+            <button type="button" class="theme-tab-pill" data-plat-cat="encar">
+              엔카 직거래 <span class="num" id="catCntEncar">2,512</span>
+            </button>
+            <button type="button" class="theme-tab-pill" data-plat-cat="kb">
+              KB차차차 <span class="num" id="catCntKb">32</span>
+            </button>
+          </div>
+
+          <!-- Exact K Car Filter Chip Row (.ccCarListFilterContainer) -->
+          <div class="ccFilterRow">
+            <button type="button" class="btnFilterCircle" id="btnResetAllFilters" title="필터 초기화" aria-label="필터 초기화">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b70f28" stroke-width="1.8" stroke-linecap="round">
+                <path d="M4 7h10M18 7h2M14 7a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM4 17h4M12 17h8M8 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"></path>
+              </svg>
+            </button>
+            <button type="button" class="btnFilter btnCert" id="btnToggleCertFilter">K Car 진단차량</button>
+            <button type="button" class="btnFilter btnNego" id="btnToggleNegoFilter">가격제안가능</button>
+            <span class="filterDivider"></span>
+
+            <select class="selectFilterPill" id="selBodyType" aria-label="차종">
+              <option value="ALL">차종 ∨</option>
+              <option value="SUV·RV">SUV·RV</option>
+              <option value="준대형·대형">준대형·대형</option>
+              <option value="중형세단">중형세단</option>
+              <option value="준중형">준중형</option>
+              <option value="경차·소형">경차·소형</option>
+              <option value="상용·승합">상용·승합</option>
+            </select>
+
+            <select class="selectFilterPill" id="selSido" aria-label="지역">
+              <option value="ALL">지역 ∨</option>
+              <option value="서울">서울</option>
+              <option value="경기">경기</option>
+              <option value="인천">인천</option>
+              <option value="부산">부산</option>
+              <option value="대구">대구</option>
+              <option value="대전">대전</option>
+              <option value="광주">광주</option>
+              <option value="울산">울산</option>
+              <option value="경남">경남</option>
+              <option value="충북">충북</option>
+              <option value="전북">전북</option>
+              <option value="제주">제주</option>
+            </select>
+
+            <select class="selectFilterPill" id="selPriceBand" aria-label="가격대">
+              <option value="ALL">가격대 ∨</option>
+              <option value="1천만원 미만">1천만원 미만</option>
+              <option value="1천~2천만원">1천~2천만원</option>
+              <option value="2천~3천만원">2천~3천만원</option>
+              <option value="3천~5천만원">3천~5천만원</option>
+              <option value="5천만원 이상">5천만원 이상</option>
+            </select>
+
+            <select class="selectFilterPill" id="selOrigin" aria-label="국산·수입">
+              <option value="ALL">국산·수입 ∨</option>
+              <option value="국산">국산차</option>
+              <option value="수입">수입차</option>
+            </select>
+          </div>
+
+          <!-- Official K Car Verification / Crawl Notice Ribbon -->
+          <div class="cert-ribbon-box">
+            <img src="./assets/kcar/ico-check-cert.svg" alt="" />
+            <span id="listRibbonMsg">K Car 인증 차량과 외부 플랫폼(당근·엔카·KB) 직거래 수집 매물을 함께 검색해요.</span>
+          </div>
+
+          <!-- Section Header & Sort -->
+          <div class="carlist-sec-head">
+            <div class="carlist-sec-top">
+              <h2 class="hot-title" id="listSecTitle">추천 통합 직거래 매물</h2>
+              <select class="sort-select-clean" id="selSortOrder" aria-label="정렬">
+                <option value="recommended">↑↓ 최근등록순</option>
+                <option value="price_asc">↑↓ 낮은가격순</option>
+                <option value="price_desc">↑↓ 높은가격순</option>
+                <option value="mileage_asc">↑↓ 짧은주행순</option>
+                <option value="year_desc">↑↓ 최신연식순</option>
+              </select>
+            </div>
+            <p class="hot-desc" id="listSecSubtitle">많은 사람들의 관심을 끌고 있는 플랫폼별 직거래 차량을 모아서 보여드리고 있어요.</p>
+          </div>
+
+          <!-- Feed List Container -->
+          <div class="car-feed-list" id="carFeedContainer"></div>
+
+          <button type="button" class="btn-more-cars" id="btnLoadMoreCars" style="display: none;">
+            직거래 차량 더 보기
+          </button>
+
+          <!-- Floating Top + Self Reg Stack -->
+          <div class="list-floating-group">
+            <button type="button" class="btn-scroll-top" id="btnScrollTop" aria-label="맨 위로">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16171d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+            </button>
+            <button type="button" class="btn-self-reg-fab" id="btnFabSelfReg">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              <span>내차 셀프 등록</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 3: DETAIL PAGE (marketm.kcar.com/ds/detail/adInfoDtl/... 1:1)
+             ================================================================ -->
+        <section class="page-view" id="viewDetail">
+          <div id="detailRenderTarget"></div>
+        </section>
+
+      </div>
+
+      <!-- Exact K Car Bottom 5-Tab Bar (.tabbar) -->
+      <nav class="tabbar" id="bottomNavBar" aria-label="하단 메뉴">
+        <ul>
+          <li>
+            <button type="button" class="tabbar-link is-active" data-bnav="home">
+              <span class="ico-gnb home"></span>
+              <span>홈</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="tabbar-link" data-bnav="wish">
+              <span class="ico-gnb wish"></span>
+              <span>찜한 차량</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="tabbar-link" data-bnav="search">
+              <span class="ico-gnb search"></span>
+              <span>차량검색</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="tabbar-link" data-bnav="chat">
+              <span class="ico-gnb chat"></span>
+              <span>채팅</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="tabbar-link" data-bnav="mypage">
+              <span class="ico-gnb mypage"></span>
+              <span>마이페이지</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Exact K Car Detail Sticky Bottom CTA (.btn-wrap.btn-fixed) -->
+      <div class="btn-wrap-fixed" id="detailFixedBar">
+        <button type="button" class="btn-ico-fav" id="btnDetailFav" aria-label="찜하기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#54555a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+        <button type="button" class="btn-primary-large" id="btnDetailPrimaryCta">채팅하기</button>
+      </div>
+
+      <!-- K Car Snackbar -->
+      <div class="kcar-snackbar" id="kcarSnackbar" role="status" aria-live="polite"></div>
+    </main>
+
+  <!-- Native K Car Modal Dialog -->
+  <dialog class="kcar-modal" id="kcarModal">
+    <h3 class="modal-tit" id="modalTit">안내</h3>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-btn-row">
+      <button type="button" class="modal-btn modal-btn--line" id="btnModalCancel">닫기</button>
+      <button type="button" class="modal-btn modal-btn--red" id="btnModalConfirm">확인</button>
+    </div>
+  </dialog>
+
+  <script src="./data/c2c_vehicles_data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
