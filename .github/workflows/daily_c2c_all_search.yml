@@ -33,8 +33,20 @@ jobs:
           git diff --staged --quiet
           if ($LASTEXITCODE -ne 0) {
             $dt = ([DateTimeOffset]::UtcNow.ToOffset([TimeSpan]::FromHours(9))).ToString("yyyy-MM-dd HH:mm")
-            git pull --rebase origin main
             git commit -m "chore(data): auto-update 4-platform C2C vehicles ($dt KST)"
+            git fetch origin main
+            $remoteJs = git show origin/main:data/c2c_vehicles_data.js
+            $today = ([DateTimeOffset]::UtcNow.ToOffset([TimeSpan]::FromHours(9))).ToString("yyyy-MM-dd")
+            if ($remoteJs -match '"crawledDate":\s*"' + [regex]::Escape($today) + '"' -and $remoteJs -match '"livePlatformsCount":\s*4') {
+              Write-Host "Remote main already received complete 4/4 Korean-IP dataset for $today; keeping 4/4 dataset."
+              exit 0
+            }
+            git rebase origin/main
+            if ($LASTEXITCODE -ne 0) {
+              git rebase --abort
+              Write-Host "Rebase conflict with newer commit on main; keeping remote dataset."
+              exit 0
+            }
             git push origin main
           } else {
             Write-Host "No changes in data/c2c_vehicles_data.js."
