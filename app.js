@@ -83,6 +83,7 @@
     u500KcarExpanded: false,
     u500ExtPageSize: 12,
     u500ExtVisible: 12,
+    prevScrollTop: 0,
     selectedCar: null,
     wishedIds: new Set(),
     modalConfirmFn: null
@@ -252,7 +253,7 @@
     return `
       <article class="car-item-vert" data-car-id="${esc(car.id)}">
         <div class="thumb">
-          <img src="${esc(car.thumbnail)}" alt="${esc(car.title)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="onCarImgFallback(this)" />
+          <img src="${esc(car.thumbnail)}" alt="${esc(car.title)}" decoding="async" referrerpolicy="no-referrer" onerror="onCarImgFallback(this)" />
           <div class="badge-area">${topBadgeHtml}</div>
         </div>
         <div class="info">
@@ -971,8 +972,10 @@
 
   // View Router
   function switchView(nextView, opts = {}) {
+    const scrollBody = document.getElementById('appScrollBody');
     if (nextView === 'detail' && state.view !== 'detail') {
       state.prevView = state.view;
+      state.prevScrollTop = scrollBody ? scrollBody.scrollTop : 0;
     }
     state.view = nextView;
 
@@ -1022,8 +1025,10 @@
       renderDetail(state.selectedCar);
     }
 
-    if (!opts.preserveScroll) {
-      document.getElementById('appScrollBody').scrollTop = 0;
+    if (opts.preserveScroll) {
+      if (scrollBody) scrollBody.scrollTop = state.prevScrollTop || 0;
+    } else if (scrollBody) {
+      scrollBody.scrollTop = 0;
     }
   }
 
