@@ -529,7 +529,9 @@
     </div>
   </dialog>
 
-  <script src="./data/c2c_vehicles_data.js"></script>
+  <script>
+    document.write('<script src="./data/c2c_vehicles_data.js?v=' + Math.floor(Date.now() / 60000) + '"><\/script>');
+  </script>
   <script src="./app.js"></script>
 </body>
 </html>
