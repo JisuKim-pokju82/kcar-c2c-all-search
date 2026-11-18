@@ -9,6 +9,8 @@ $ErrorActionPreference = 'Continue'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 if (-not $ScriptDir) { $ScriptDir = (Get-Location).Path }
 $ProjectRoot = Split-Path -Parent $ScriptDir
+$TempDir = [System.IO.Path]::GetTempPath()
+$CurlBin = if (Get-Command curl.exe -ErrorAction SilentlyContinue) { "curl.exe" } else { "curl" }
 $OutDir = Join-Path $ProjectRoot "data"
 if (-not (Test-Path $OutDir)) { New-Item -ItemType Directory -Path $OutDir -Force | Out-Null }
 $OutJsPath = Join-Path $OutDir "c2c_vehicles_data.js"
@@ -52,7 +54,7 @@ try {
     $trendArr = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/JisuKim-pokju82/c2c-car-trend-tracker/main/competitor_trend.json?t=$tsCache" -TimeoutSec 15 -ErrorAction Stop
     if ($trendArr) { $latestTrend = @($trendArr)[-1] }
 } catch {
-    $localTrendPath = Join-Path (Split-Path -Parent $ProjectRoot) "당근\competitor_trend.json"
+    $localTrendPath = Join-Path (Join-Path (Split-Path -Parent $ProjectRoot) "당근") "competitor_trend.json"
     if (Test-Path $localTrendPath) {
         try {
             $trendArr = [System.IO.File]::ReadAllText($localTrendPath, [System.Text.Encoding]::UTF8) | ConvertFrom-Json
@@ -244,8 +246,8 @@ if ($kcarItems.Count -gt 0) {
 Write-Host "2. Collecting Daangn Used Cars..." -ForegroundColor Yellow
 $daangnLiveTotal = 0
 try {
-    $tempGz = Join-Path $env:TEMP "daangn_sm_$($PID).xml.gz"
-    curl.exe -s -L --max-time 25 -A "Mozilla/5.0" "https://www.daangn.com/kr/cars/sitemap-detail.xml.gz" -o $tempGz
+    $tempGz = Join-Path $TempDir "daangn_sm_$($PID).xml.gz"
+    & $CurlBin -s -L --max-time 25 -A "Mozilla/5.0" "https://www.daangn.com/kr/cars/sitemap-detail.xml.gz" -o $tempGz
     if ((Test-Path $tempGz) -and (Get-Item $tempGz).Length -gt 100) {
         $fs = [System.IO.File]::OpenRead($tempGz)
         $gz = New-Object System.IO.Compression.GZipStream($fs, [System.IO.Compression.CompressionMode]::Decompress)
@@ -396,11 +398,11 @@ $uaEncar = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 
 try {
     $uDom = "https://api.encar.com/search/car/list/general?count=true&q=(And.Hidden.N._.CarType.Y._.Separation.A.)&sr=%7CModifiedDate%7C0%7C200"
-    $bDomRaw = curl.exe -s -L --max-time 25 -A $uaEncar -H "Accept-Language: ko-KR,ko;q=0.9" -H "Referer: http://www.encar.com/" $uDom
+    $bDomRaw = & $CurlBin -s -L --max-time 25 -A $uaEncar -H "Accept-Language: ko-KR,ko;q=0.9" -H "Referer: http://www.encar.com/" $uDom
     $bDom = if ($bDomRaw) { $bDomRaw | ConvertFrom-Json } else { $null }
 
     $uImp = "https://api.encar.com/search/car/list/general?count=true&q=(And.Hidden.N._.CarType.N._.Separation.A.)&sr=%7CModifiedDate%7C0%7C150"
-    $bImpRaw = curl.exe -s -L --max-time 25 -A $uaEncar -H "Accept-Language: ko-KR,ko;q=0.9" -H "Referer: http://www.encar.com/" $uImp
+    $bImpRaw = & $CurlBin -s -L --max-time 25 -A $uaEncar -H "Accept-Language: ko-KR,ko;q=0.9" -H "Referer: http://www.encar.com/" $uImp
     $bImp = if ($bImpRaw) { $bImpRaw | ConvertFrom-Json } else { $null }
 
     if ($bDom -and $bDom.Count) { $encarLiveTotal += [int]$bDom.Count }
@@ -494,8 +496,8 @@ Write-Host "4. Collecting KB ChaChaCha Personal Direct Deal vehicles..." -Foregr
 $kbItems = New-Object System.Collections.Generic.List[object]
 try {
     for ($kbPage = 1; $kbPage -le 3; $kbPage++) {
-        $tempKb = Join-Path $env:TEMP "kb_proto_$($PID)_$($kbPage).html"
-        curl.exe -s -L --compressed --max-time 25 -A $uaEncar -H "Accept-Language: ko-KR,ko;q=0.9" -H "Referer: https://www.kbchachacha.com/" "https://www.kbchachacha.com/public/search/list.empty?page=$kbPage&sort=-orderDate&directYn=Y" -o $tempKb
+        $tempKb = Join-Path $TempDir "kb_proto_$($PID)_$($kbPage).html"
+        & $CurlBin -s -L --compressed --max-time 25 -A $uaEncar -H "Accept-Language: ko-KR,ko;q=0.9" -H "Referer: https://www.kbchachacha.com/" "https://www.kbchachacha.com/public/search/list.empty?page=$kbPage&sort=-orderDate&directYn=Y" -o $tempKb
         if (-not (Test-Path $tempKb)) { break }
         $kbHtml = [System.IO.File]::ReadAllText($tempKb, [System.Text.Encoding]::UTF8)
         Remove-Item $tempKb -Force -ErrorAction SilentlyContinue
