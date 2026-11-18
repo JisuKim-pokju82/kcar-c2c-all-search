@@ -18,6 +18,10 @@
   };
 
   const VEHICLES = Array.isArray(window.KCAR_ALL_C2C_VEHICLES) ? window.KCAR_ALL_C2C_VEHICLES : [];
+  const SHORTS_GROUPS =
+    window.KCAR_MODEL_SHORTS_DATA && Array.isArray(window.KCAR_MODEL_SHORTS_DATA.groups)
+      ? window.KCAR_MODEL_SHORTS_DATA.groups
+      : [];
 
   const FALLBACK_CAR_IMG =
     'data:image/svg+xml;utf8,' +
@@ -86,7 +90,11 @@
     prevScrollTop: 0,
     selectedCar: null,
     wishedIds: new Set(),
-    modalConfirmFn: null
+    modalConfirmFn: null,
+    shortsEnabled: true,
+    activeShortsList: [],
+    activeShortsIdx: 0,
+    activeShortsLabel: ''
   };
 
   function esc(val) {
@@ -187,6 +195,192 @@
     el.dataset.fb = '1';
     el.src = FALLBACK_CAR_IMG;
   };
+
+  window.onShortThumbFallback = function (el, videoId) {
+    if (!el || el.dataset.sfb === '1') return;
+    el.dataset.sfb = '1';
+    el.src = `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
+  };
+
+  function getDisplayModelName(car) {
+    const brand = String(car.brand || '').replace(/\(.*\)/g, '').trim();
+    const model = String(car.model || '').replace(/\s*\(.*?\)\s*/g, ' ').trim();
+    if (brand && model && brand !== '수입차' && !model.startsWith(brand)) {
+      return `${brand} ${model}`;
+    }
+    if (model) return model;
+    return String(car.title || '').split(/\s+/).slice(0, 2).join(' ');
+  }
+
+  function resolveShortsForCar(car) {
+    const displayModel = getDisplayModelName(car);
+    const hay = `${car.brand || ''} ${car.model || ''} ${car.title || ''}`.toLowerCase();
+
+    let matchedGroup = null;
+    for (let i = 0; i < SHORTS_GROUPS.length; i++) {
+      const g = SHORTS_GROUPS[i];
+      if (!g.keywords || g.keywords.length === 0) continue;
+      for (let k = 0; k < g.keywords.length; k++) {
+        const kw = String(g.keywords[k]).toLowerCase();
+        if (kw && hay.includes(kw)) {
+          matchedGroup = g;
+          break;
+        }
+      }
+      if (matchedGroup) break;
+    }
+
+    const isDirectMatch = Boolean(matchedGroup && matchedGroup.shorts && matchedGroup.shorts.length > 0);
+    if (!matchedGroup || !matchedGroup.shorts || matchedGroup.shorts.length === 0) {
+      const fbKey = String(car.bodyType || '').includes('SUV') ? 'fallback_suv' : 'fallback_sedan';
+      matchedGroup = SHORTS_GROUPS.find((g) => g.key === fbKey) || SHORTS_GROUPS[0] || null;
+    }
+
+    const shorts = matchedGroup && Array.isArray(matchedGroup.shorts) ? matchedGroup.shorts : [];
+    const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+      `${displayModel} 시승기 실오너 후기 #shorts`
+    )}`;
+
+    return {
+      displayModel,
+      groupLabel: isDirectMatch ? displayModel : matchedGroup ? matchedGroup.label : displayModel,
+      isDirectMatch,
+      shorts,
+      ytSearchUrl
+    };
+  }
+
+  function renderCarShortsSection(car) {
+    if (!state.shortsEnabled || !car) return '';
+    const resolved = resolveShortsForCar(car);
+    if (!resolved.shorts.length) return '';
+
+    state.activeShortsList = resolved.shorts;
+    state.activeShortsLabel = resolved.displayModel;
+
+    const subCopy = resolved.isDirectMatch
+      ? '구매 전 확인하면 좋은 동일 차종 실오너 후기·시승 쇼츠만 모았어요.'
+      : `${resolved.displayModel} 탐색에 도움되는 중고차 핵심 체크 쇼츠예요.`;
+
+    return `
+      <section class="dtl-shorts-sec" id="secCarShorts">
+        <div class="dtl-shorts-head">
+          <div class="dtl-shorts-tit-row">
+            <span class="shorts-brand-mark" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#b70f28">
+                <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-6.62l-6 2.49a3.74 3.74 0 0 0 .23 6.79l1.2.49L8.5 12.97a3.74 3.74 0 0 0 3.5 6.62l6-2.49a3.74 3.74 0 0 0-.23-6.78zM10 14.65v-5.3L14.5 12 10 14.65z"/>
+              </svg>
+            </span>
+            <h3 class="dtl-shorts-tit">
+              <span class="accent-model">${esc(resolved.displayModel)}</span> 쇼츠 리뷰
+            </h3>
+          </div>
+          <a class="dtl-shorts-more" href="${esc(resolved.ytSearchUrl)}" target="_blank" rel="noopener noreferrer">
+            유튜브 더보기 &gt;
+          </a>
+        </div>
+        <p class="dtl-shorts-sub">${esc(subCopy)}</p>
+
+        <div class="shorts-swiper-row">
+          ${resolved.shorts
+            .map(
+              (s, idx) => `
+            <button type="button" class="shorts-card" data-short-idx="${idx}" aria-label="${esc(s.title)} 쇼츠 재생">
+              <img src="${esc(s.thumb)}" alt="${esc(s.title)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="onShortThumbFallback(this, '${esc(s.videoId)}')" />
+              <div class="shorts-card-top">
+                <span class="shorts-angle-chip">${esc(s.tag || '핵심 리뷰')}</span>
+                <span class="shorts-play-circle" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              </div>
+              <div class="shorts-card-bottom">
+                <p class="shorts-card-tit">${esc(s.title)}</p>
+                <span class="shorts-card-ch">@${esc(s.channel)}</span>
+              </div>
+            </button>
+          `
+            )
+            .join('')}
+        </div>
+
+        <div class="dtl-shorts-notice">
+          <span>타사 딜러 매물 홍보를 제외한 차종 정보 큐레이션입니다.</span>
+          <span class="safe-tag">리뷰 전용</span>
+        </div>
+      </section>
+      <div class="gray-divider"></div>
+    `;
+  }
+
+  function renderShortsModalSlide() {
+    const list = state.activeShortsList || [];
+    if (!list.length) return;
+    const idx = ((state.activeShortsIdx % list.length) + list.length) % list.length;
+    state.activeShortsIdx = idx;
+    const item = list[idx];
+    const car = state.selectedCar;
+
+    document.getElementById('shortsModalTitle').textContent = `${state.activeShortsLabel} 쇼츠`;
+    document.getElementById('shortsModalIdx').textContent = `${idx + 1} / ${list.length}`;
+    document.getElementById('shortsModalChannel').textContent = `@${item.channel}`;
+    document.getElementById('shortsModalVideoTit').textContent = item.title;
+
+    const ytUrl = `https://www.youtube.com/shorts/${encodeURIComponent(item.videoId)}`;
+    document.getElementById('linkShortsYoutube').href = ytUrl;
+
+    const box = document.getElementById('shortsIframeBox');
+    if (window.location.protocol === 'file:') {
+      box.innerHTML = `
+        <div style="width:100%; height:100%; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; background:#0f1015;">
+          <img src="${esc(item.thumb)}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.32;" />
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <p style="font-size:13px; line-height:19px; color:#fff;">로컬 파일(file://) 열기 모드에서는 유튜브 보안 정책상 새 창 재생으로 연결됩니다.<br/><span style="font-size:11.5px; color:rgba(255,255,255,0.7);">(쇼츠미리보기_열기.bat 실행 시 앱 내 즉시 자동재생 지원)</span></p>
+            <a href="${esc(ytUrl)}" target="_blank" rel="noopener noreferrer" style="height:40px; padding:0 18px; border-radius:100px; background:#f01d29; color:#fff; font-size:13px; font-weight:700; display:inline-flex; align-items:center; gap:6px;">
+              <span>YouTube 쇼츠 바로 재생 ↗</span>
+            </a>
+          </div>
+        </div>
+      `;
+    } else {
+      const embedUrl = `https://www.youtube.com/embed/${encodeURIComponent(
+        item.videoId
+      )}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+      box.innerHTML = `
+        <iframe
+          src="${embedUrl}"
+          title="${esc(item.title)}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      `;
+    }
+
+    if (car) {
+      const thumbEl = document.getElementById('shortsBarCarThumb');
+      thumbEl.dataset.fb = '0';
+      thumbEl.src = car.thumbnail || FALLBACK_CAR_IMG;
+      document.getElementById('shortsBarCarTitle').textContent = car.title;
+      document.getElementById('shortsBarCarPrice').textContent = `${fmtPrice(car.priceManwon)} · ${car.yearLabel}`;
+    }
+  }
+
+  function openShortsModal(idx) {
+    if (!state.activeShortsList || !state.activeShortsList.length) return;
+    state.activeShortsIdx = Number(idx) || 0;
+    renderShortsModalSlide();
+    const dlg = document.getElementById('kcarShortsModal');
+    if (dlg && typeof dlg.showModal === 'function' && !dlg.open) {
+      dlg.showModal();
+    }
+  }
+
+  function closeShortsModal() {
+    const dlg = document.getElementById('kcarShortsModal');
+    const box = document.getElementById('shortsIframeBox');
+    if (box) box.innerHTML = '';
+    if (dlg && dlg.open) dlg.close();
+  }
 
   let snackTimer = null;
   function showSnack(msg) {
@@ -628,6 +822,7 @@
         <nav class="dtl-anchor-tabs">
           <button type="button" class="dtl-anchor-tab is-active" data-dtl-scroll="secExtReport">요약 리포트</button>
           <button type="button" class="dtl-anchor-tab" data-dtl-scroll="secExtSpec">상세 정보</button>
+          ${state.shortsEnabled ? '<button type="button" class="dtl-anchor-tab" data-dtl-scroll="secCarShorts">차종 쇼츠<span class="tab-new-dot"></span></button>' : ''}
           <button type="button" class="dtl-anchor-tab" data-dtl-scroll="secExtSimilar">추천 차량</button>
         </nav>
 
@@ -661,6 +856,8 @@
         </div>
 
         <div class="gray-divider"></div>
+
+        ${renderCarShortsSection(car)}
 
         ${
           similarKcar.length > 0
@@ -765,6 +962,7 @@
         <nav class="dtl-anchor-tabs">
           <button type="button" class="dtl-anchor-tab is-active" data-dtl-scroll="secKcarReport">안심 리포트</button>
           <button type="button" class="dtl-anchor-tab" data-dtl-scroll="secKcarSpec">상세 정보</button>
+          ${state.shortsEnabled ? '<button type="button" class="dtl-anchor-tab" data-dtl-scroll="secCarShorts">차종 쇼츠<span class="tab-new-dot"></span></button>' : ''}
           <button type="button" class="dtl-anchor-tab" data-dtl-scroll="secKcarSimilar">추천 차량</button>
         </nav>
 
@@ -808,6 +1006,8 @@
         </div>
 
         <div class="gray-divider"></div>
+
+        ${renderCarShortsSection(car)}
 
         ${
           similarKcar.length > 0
@@ -1255,6 +1455,12 @@
         return;
       }
 
+      const shortBtn = e.target.closest('[data-short-idx]');
+      if (shortBtn) {
+        openShortsModal(Number(shortBtn.dataset.shortIdx || 0));
+        return;
+      }
+
       const card = e.target.closest('[data-car-id]');
       if (card) {
         openCarById(card.dataset.carId);
@@ -1432,6 +1638,80 @@
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.close();
     });
+
+    // Shorts Player Modal Controls
+    const shortsModal = document.getElementById('kcarShortsModal');
+    if (shortsModal) {
+      document.getElementById('btnCloseShortsModal').addEventListener('click', closeShortsModal);
+      document.getElementById('btnShortsBackToCar').addEventListener('click', closeShortsModal);
+      document.getElementById('btnPrevShort').addEventListener('click', () => {
+        state.activeShortsIdx -= 1;
+        renderShortsModalSlide();
+      });
+      document.getElementById('btnNextShort').addEventListener('click', () => {
+        state.activeShortsIdx += 1;
+        renderShortsModalSlide();
+      });
+      shortsModal.addEventListener('close', () => {
+        const box = document.getElementById('shortsIframeBox');
+        if (box) box.innerHTML = '';
+      });
+      shortsModal.addEventListener('click', (e) => {
+        if (e.target === shortsModal) closeShortsModal();
+      });
+    }
+
+    // Optional Preview Compare Bar (Only shown when ?preview=1 or ?preview=shorts is explicitly passed)
+    const previewBar = document.getElementById('previewCompareBar');
+    const hasPreviewParam = new URLSearchParams(window.location.search).has('preview');
+    if (previewBar && hasPreviewParam) {
+      previewBar.style.display = 'flex';
+      const toggleBtn = document.getElementById('btnToggleShortsPreview');
+      const infoBtn = document.getElementById('btnPreviewRollbackInfo');
+
+      toggleBtn.addEventListener('click', () => {
+        state.shortsEnabled = !state.shortsEnabled;
+        toggleBtn.classList.toggle('is-on', state.shortsEnabled);
+        toggleBtn.textContent = state.shortsEnabled ? '쇼츠 ON' : '기존 화면(OFF)';
+        if (state.view === 'detail' && state.selectedCar) {
+          const scrollBody = document.getElementById('appScrollBody');
+          const savedScroll = scrollBody ? scrollBody.scrollTop : 0;
+          renderDetail(state.selectedCar);
+          if (scrollBody) scrollBody.scrollTop = savedScroll;
+        } else if (VEHICLES.length > 0) {
+          openCarById(VEHICLES[0].id);
+        }
+        showSnack(
+          state.shortsEnabled
+            ? '차량 상세페이지에 동일 차종 쇼츠 섹션이 적용되었습니다.'
+            : '기존 원본 상세페이지(쇼츠 제외) 비교 화면입니다.'
+        );
+      });
+
+      infoBtn.addEventListener('click', () => {
+        openKcarModal({
+          title: '미리보기 상태 및 롤백 안내',
+          html: `
+            현재 화면은 <strong>실제 배포 사이트(GitHub Pages)에 반영하기 전 로컬 미리보기</strong> 상태입니다.<br/><br/>
+            <span style="display:block; padding:10px 12px; border-radius:6px; background:#f6f8fa; font-size:12px; color:#54555a; line-height:18px;">
+              · <strong>실시간 비교</strong>: 하단 바의 [쇼츠 ON / 기존 화면] 버튼으로 전·후 느낌을 즉시 비교할 수 있습니다.<br/>
+              · <strong>1초 원상복구(롤백)</strong>: 폴더 내 <strong>쇼츠기능_롤백.bat</strong> 파일을 실행하시면 원본 파일로 100% 복원됩니다.<br/>
+              · <strong>실제 사이트 적용</strong>: 확인 후 마음에 드시면 깃허브 업로드 실행 시 실제 사이트에 반영됩니다.
+            </span>
+          `,
+          confirmLabel: '차량 상세 쇼츠 확인하기',
+          onConfirm: () => {
+            if (state.view !== 'detail' && VEHICLES.length > 0) {
+              openCarById(VEHICLES[0].id);
+              setTimeout(() => {
+                const sec = document.getElementById('secCarShorts');
+                if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 120);
+            }
+          }
+        });
+      });
+    }
   }
 
   initKPIs();

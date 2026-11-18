@@ -515,9 +515,64 @@
         <button type="button" class="btn-primary-large" id="btnDetailPrimaryCta">채팅하기</button>
       </div>
 
+      <!-- Local Preview Mode Comparison Bar (Hidden on live github.io domain) -->
+      <div class="preview-compare-bar" id="previewCompareBar" style="display: none;">
+        <div class="preview-compare-left">
+          <span class="preview-dot"></span>
+          <span class="preview-txt">로컬 미리보기 (미배포)</span>
+        </div>
+        <div class="preview-compare-actions">
+          <button type="button" class="preview-toggle-btn is-on" id="btnToggleShortsPreview">쇼츠 ON</button>
+          <button type="button" class="preview-help-btn" id="btnPreviewRollbackInfo">롤백 안내</button>
+        </div>
+      </div>
+
       <!-- K Car Snackbar -->
       <div class="kcar-snackbar" id="kcarSnackbar" role="status" aria-live="polite"></div>
     </main>
+
+  <!-- Native K Car Shorts Vertical Player Modal -->
+  <dialog class="kcar-shorts-modal" id="kcarShortsModal" aria-label="차종 유튜브 쇼츠 플레이어">
+    <div class="shorts-modal-inner">
+      <div class="shorts-modal-head">
+        <div class="shorts-modal-tit-wrap">
+          <span class="shorts-yt-badge">Shorts</span>
+          <strong class="shorts-modal-tit" id="shortsModalTitle">차종 리뷰 쇼츠</strong>
+          <span class="shorts-modal-cnt" id="shortsModalIdx">1 / 4</span>
+        </div>
+        <button type="button" class="shorts-modal-close" id="btnCloseShortsModal" aria-label="닫기">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="shorts-modal-stage">
+        <div class="shorts-iframe-box" id="shortsIframeBox"></div>
+        <button type="button" class="shorts-nav-btn is-prev" id="btnPrevShort" aria-label="이전 쇼츠">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="shorts-nav-btn is-next" id="btnNextShort" aria-label="다음 쇼츠">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+
+      <div class="shorts-modal-meta">
+        <div class="shorts-modal-meta-top">
+          <span class="shorts-meta-channel" id="shortsModalChannel">@채널</span>
+          <a class="shorts-yt-outlink" id="linkShortsYoutube" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube에서 열기 ↗</a>
+        </div>
+        <p class="shorts-meta-vtitle" id="shortsModalVideoTit"></p>
+      </div>
+
+      <div class="shorts-modal-carbar">
+        <img class="shorts-carbar-thumb" id="shortsBarCarThumb" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" referrerpolicy="no-referrer" />
+        <div class="shorts-carbar-info">
+          <p class="shorts-carbar-name" id="shortsBarCarTitle"></p>
+          <strong class="shorts-carbar-price" id="shortsBarCarPrice"></strong>
+        </div>
+        <button type="button" class="shorts-carbar-cta" id="btnShortsBackToCar">매물 보기</button>
+      </div>
+    </div>
+  </dialog>
 
   <!-- Native K Car Modal Dialog -->
   <dialog class="kcar-modal" id="kcarModal">
@@ -531,6 +586,7 @@
 
   <script>
     document.write('<script src="./data/c2c_vehicles_data.js?v=' + Math.floor(Date.now() / 60000) + '"><\/script>');
+    document.write('<script src="./data/c2c_model_shorts.js?v=' + Math.floor(Date.now() / 60000) + '"><\/script>');
   </script>
   <script src="./app.js"></script>
 </body>
